@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>home page</title>
+    <style>
+        @font-face {
+        font-family: 'NaikaiFont';
+        src: url('/font/NaikaiFont-Bold.ttf') format('truetype');
+        }
+        body { 
+            text-align: center; 
+            font-family:'NaikaiFont', Geneva, Tahoma, sans-serif;
+            background-image: url('/font/bg.jpg');
+            background-size: cover;           
+            background-repeat: no-repeat;    
+            background-position: center;      
+            background-attachment: fixed; 
+            }
+        button.button {
+            padding: 10px 20px;
+            font-size: 20px;
+            background: rgba(182, 34, 34, 0.679);
+            color: white;
+            border-radius: 10px;
+            height: 50px;
+            width: 150px;
+            border: 5px dotted rgb(65, 20, 20);
+            margin-top: 50px;
+            margin-left: 50px;
+            font-family:'NaikaiFont', Geneva, Tahoma, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: red; font-size: 150px;margin-top: 150px;">海龜湯</h1>
+    <button onclick="location.href='/ser'" class="button">遊戲開始</button>
+</body>
+</html>

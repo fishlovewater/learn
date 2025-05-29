@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>海龜湯--client</title>
+    <style>
+        body {
+            color: rgb(240, 240, 240);
+            background: url('/font/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin-top: 30px;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        #log {
+            width: 80%;
+            margin: 20px auto;
+            padding: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 8px rgba(205, 54, 16, 0.5), 0 0 16px rgba(210, 115, 13, 0.2); /* 發光漂亮 */
+            background: rgba(0, 0, 0, 0.4); /* 要透明才能看到背景 */
+            height: 300px;
+            overflow-y: scroll;
+            font-family: monospace;
+            backdrop-filter: blur(5px); /* 模糊特效 */
+            transition: box-shadow 0.3s ease-in-out;
+        }
+
+        #log:hover {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); /* 滑鼠滑過時加強光暈 */
+        }
+
+        @keyframes shake {
+            0% { transform: translate(0); }
+            25% { transform: translate(1px, 1px); }
+            50% { transform: translate(-1px, 0); }
+            75% { transform: translate(1px, -1px); }
+            100% { transform: translate(0); }
+        }
+
+        .blood-flash {
+            animation: flashRed 0.2s;
+        }
+
+        @keyframes flashRed {
+        from { box-shadow: 0 0 80px 20px crimson; }
+        to { box-shadow: none; }
+}
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1 style="text-align:center; font-size:36px; color:crimson; font-family:'Creepster',cursive; text-shadow:2px 2px 5px darkred; animation:shake 0.3s infinite;">海龜湯：玩家控制面板</h1>
+    <audio id="bgm" loop>
+    <source src="/font/voice.m4a" type="audio/mp4">
+    </audio>
+
+    <div style="text-align:center; margin-top: 20px;">
+    <button id="playMusicBtn" onclick="playMusic()" style="padding: 12px 24px; font-size: 10px;">
+    playMusic
+    </button>
+    </div>
+    <div id="log"></div>
+
+    <div style="display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;">
+        <input 
+            type="text" 
+            id="queInput" 
+            onkeypress="if(event.key === 'Enter') fetmsg()"
+            placeholder="輸入問題"
+            style="height: 40px; width: 80%; margin-top: 20px; text-align: center;">
+
+        <button 
+            onclick="fetmsg()" 
+            style="padding: 10px 20px; font-size: 16px; margin-top: 50px; text-align: center;">
+            送出問題
+        </button>
+    </div>
+
+    <script>
+        function fetchMessages() {
+            fetch('/messages')
+                .then(response => response.json())
+                .then(data => {
+                    const log = document.getElementById('log');
+                    log.innerHTML = data.messages.map(msg => `<div>${msg}</div>`).join('');
+                    log.scrollTop = log.scrollHeight;
+                });
+        }
+        function playMusic() {
+            const audio = document.getElementById("bgm");
+            const btn = document.getElementById("playMusicBtn");
+
+            audio.play().then(() => {
+                btn.style.display = "none"; // 播放成功後隱藏按鈕
+            }).catch((err) => {
+                alert("播放失敗，請點我再試一次！");
+                console.warn("播放錯誤：", err);
+            });
+        }
+
+
+        function getmsg(ques) {
+            fetch('/getmsg', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' // tell server send type=json
+                },
+                body: JSON.stringify({ getm: ques })
+            })
+            .then(response => response.json()) // 備用
+        }
+
+        function fetmsg() {
+            const inputElement = document.getElementById('queInput'); 
+            const ques = inputElement.value; 
+
+            getmsg(ques); 
+            inputElement.value = '';  //清空輸入欄位
+
+
+            // 閃爍血光特效在按鈕發送時
+            const button = document.querySelector("button");
+            button.classList.add("blood-flash");
+            setTimeout(() => button.classList.remove("blood-flash"), 200);
+        }
+
+        setInterval(fetchMessages, 1000); // 一秒執行一次fetchmsg
+    </script>
+</body>
+</html>

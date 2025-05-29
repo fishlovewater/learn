@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>home page</title>
+  <!-- 詭異字體 -->
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+
+  <style>
+    /* 背景淡入動畫 */
+    @keyframes fadeInBg {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* 抖動動畫 */
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    /* 滴血動畫 */
+    @keyframes bloodDrip {
+      0% { text-shadow: 0 0 5px red; }
+      50% { text-shadow: 0 10px 15px red; }
+      100% { text-shadow: 0 0 5px darkred; }
+    }
+
+    .shake {
+      animation: shake 0.8s infinite;
+    }
+
+    .blood {
+      animation: bloodDrip 2s infinite;
+    }
+
+    body {
+      background: url('/font/photo.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #ff4c4c;
+      font-family: 'Creepster', cursive;
+      animation: fadeInBg 2s ease-in;
+      margin: 0;
+      padding-top: 100px;
+    }
+
+    .centerBox {
+      width: 90%;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      text-shadow: 0 0 12px red, 0 0 20px darkred;
+    }
+
+    input#storyInput {
+      height: 40px;
+      width: 80%;
+      margin-top: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #ff4c4c;
+      border: 2px solid #ff0000;
+      border-radius: 6px;
+      padding: 5px;
+      font-size: 22px;
+      box-shadow: 0 0 8px red;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    button.button {
+      font-size: 24px;
+      color: rgb(243, 65, 38);
+      backdrop-filter: blur(5px);
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 8px rgba(205, 54, 16, 0.5), 0 0 16px rgba(210, 115, 13, 0.2);
+      margin-top: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    button.button:hover {
+      background-color: rgba(50, 0, 0, 0.6);
+      box-shadow: 0 0 12px red;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+    <div class="centerBox">
+    <h1 class="shake blood">請輸入湯底</h1>
+    <input 
+    type="text" 
+    id="storyInput" 
+    placeholder="輸入故事內容"
+    style="height: 40px; width: 80%;margin-top: 20px;">
+    <input 
+    type="text" 
+    id="ansInput" 
+    placeholder="輸入解答內容"
+    style="height: 40px; width: 80%;margin-top: 20px;">
+    <br>
+    <button onclick=submitStory() class="button">送出湯底及解答</button>
+    <br>
+    <button onclick="location.href='/story'" class="button">前往控制頁面</button>
+    </div>
+    <script>
+    function getstory(story){
+        fetch('/getst',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' //tell server send type=json
+            },
+            body: JSON.stringify({ storyg: story })
+        })
+        .then(response => response.json())//turn server response to json
+        .then(data => {
+        alert(data.message);  // 顯示伺服器回覆的訊息 debug 用
+    })
+    }
+
+    function getans(ans)
+    {
+        fetch('\ansg',{
+            method:'POST',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ans: ans})
+        })
+        .then(response=>response.json())//備用
+    }
+
+    function submitStory() {
+    const story = document.getElementById('storyInput').value;
+    const ans = document.getElementById('ansInput').value;
+    getstory(story); 
+    getans(ans);
+    }
+    </script>
+</body>
+</html>
